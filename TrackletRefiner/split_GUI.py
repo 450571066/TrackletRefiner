@@ -45,10 +45,10 @@ def show(input_list):
     window = tk.Tk()
     window.title("{}->{}".format(",".join(input_list[0][-1][:2]), ",".join(input_list[-1][-1][:2])))
     # TODO: set window's size, 1920 * 1080 as default
-    # width = 1920
-    # height = 1030
-    width = 1000
-    height = 600
+    width = 1920
+    height = 1030
+    # width = 1000
+    # height = 600
     window.geometry('{}x{}'.format(width,height))
     var = tk.StringVar()
 
@@ -96,6 +96,8 @@ def show(input_list):
     
     # the click on method for all correct, will continue on this tracklet
     def all_correct():
+        global count
+        global sel
         if m == current_tracklet[-1]:
             # if this is the last part for the tracklet, we will add this whole tracklet into confirmed stack and continue loop on unworked stack
             confirmed_stack.append(current_tracklet)
@@ -107,12 +109,13 @@ def show(input_list):
     def trash():
         global sel
         global flag
+        global show_list
         # set flag to True to end this tracklet and continue on unworked stack
         if sel:
             print(sel)
             stack.insert(0,current_tracklet[sel:])
             sel = 0
-
+        show_list = []
         flag = True
         window.destroy()
 
@@ -148,8 +151,8 @@ def show(input_list):
 
     #TODO: default value for three buttons, could change here to fit your screen
     start_point = 100
-    button_height = height-50
-    # button_height = height-100
+    # button_height = height-50
+    button_height = height-100
     # b1 = tk.Button(window, text="All Correct", command=all_correct)
     # b1.place(x=3 * start_point, y=button_height)
     b2 = tk.Button(window, text="Confirm", command=confirm)
@@ -379,11 +382,16 @@ if __name__ == '__main__':
                     print("---Time for this epoch: {:.5f}---\n".format(time4-time3))
                     time3 = time.time()
 
-                    show_list = []
+                    show_list = [[bb,width,height,m]]
+                    if m == current_tracklet[-1]:
+                        show_list = []
+                    if flag or close:
+                        show_list = []
                     # update count for next loop
-                    count += length
+                    count += length - 1
 
-            if show_list:
+            if show_list and len(show_list) > 1:
+                print("?")
                 print(count)
                 time_for_GUI = time.time()
                 print("Time for intercept bounding box: {:.5f}".format(time_for_GUI-get_frame))
@@ -399,19 +407,19 @@ if __name__ == '__main__':
 
         # write to the current folder
         # if not close:
-        f = open("splited_MOT_files/{}.txt".format(filename), "w")
-        output_list = []
-        for i in range(len(confirmed_stack)):
-            for j in range(len(confirmed_stack[i])):
-                temp = confirmed_stack[i][j]
-                temp[1] = int(i+1)
-                temp[0] = int(temp[0])
-                output_list.append(temp)
-        output_list.sort()
-        for i in output_list:
-            i[0] = str(i[0])
-            i[1] = str(i[1])
-            f.write(" ".join(i))
-            f.write("\n")
-        f.close()
-        print("Finished the txt file")
+        # f = open("splited_MOT_files/{}.txt".format(filename), "w")
+        # output_list = []
+        # for i in range(len(confirmed_stack)):
+        #     for j in range(len(confirmed_stack[i])):
+        #         temp = confirmed_stack[i][j]
+        #         temp[1] = int(i+1)
+        #         temp[0] = int(temp[0])
+        #         output_list.append(temp)
+        # output_list.sort()
+        # for i in output_list:
+        #     i[0] = str(i[0])
+        #     i[1] = str(i[1])
+        #     f.write(" ".join(i))
+        #     f.write("\n")
+        # f.close()
+        # print("Finished the txt file")
